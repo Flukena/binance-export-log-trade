@@ -4,7 +4,7 @@ from tkinter import filedialog
 import os
 import pandas as pd
 from openpyxl import Workbook
-
+from openpyxl import load_workbook
 def select_file(filepath, df):
     # Open a file dialog to select the Excel file
     
@@ -16,9 +16,16 @@ def select_file(filepath, df):
     df['Price'] = df['Amount'] / df['Quantity']
     # Create a new workbook and add a worksheet
     # Print the dataframe
-    df.rename(columns={'Date(UTC)':'DateUTC+7'}, inplace=True)
-    df = df[['DateUTC+7', 'Symbol', 'Price', 'Side', 'Quantity', 'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset']]
-    df['DateUTC+7'] = pd.to_datetime(df['DateUTC+7'], utc=True) + pd.Timedelta(hours=7)
+    df.rename(columns={'Date(UTC)':'DateUTC'}, inplace=True)
+    df = df[['DateUTC', 'Symbol', 'Price', 'Side', 'Quantity', 'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset']]
+    # df.to_excel("./result.xlsx", sheet_name='result', index=False)
+    
+    print(df)
+    df['DateUTC'] = pd.to_datetime(df['DateUTC'], utc=True) + pd.Timedelta(hours=7)
+    df['DateUTC'] = df['DateUTC'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    print(df)
+    editexcel(filepath, df)
+
     # Create a new frame to hold the treeview and the buttons
     frame = tk.Frame(root)
     frame.pack(fill='both', expand=True)
@@ -46,7 +53,12 @@ def on_select(event):
     col_num = int(col.replace("#", ""))
     value = tree.item(selected_item, "values")[col_num-1]
     print("Selected value:", value)
-
+def editexcel(filepath, df):
+    book = load_workbook(filepath)
+    writer = pd.ExcelWriter(filepath, engine='openpyxl') 
+    writer.book = book  
+    df.to_excel(writer, sheet_name='Result Sheet')
+    writer.save()
 
 root = tk.Tk()
 root.title("Excel File Selector")
