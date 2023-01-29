@@ -12,7 +12,7 @@ executables = [
 ]
 
 setup(name='CalLogTradeBinance',
-      version = '1.0',
+      version = '1.1',
       description = 'Summary Log Binance Future',
       options = dict(build_exe = buildOptions),
       executables = executables)
