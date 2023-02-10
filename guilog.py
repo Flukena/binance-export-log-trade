@@ -63,7 +63,9 @@ def editexcel(filepath, df):
 root = tk.Tk()
 root.title("Excel File Selector")
 try:
-    filepath = "C:/Users/flukg/Downloads/Export Trade History.xlsx"
+    download_path = os.path.join(os.path.expanduser("~"), "Downloads")
+
+    filepath = download_path+"/Export Trade History.xlsx"
     df = pd.read_excel(filepath)
     select_file(filepath, df)
 except:
